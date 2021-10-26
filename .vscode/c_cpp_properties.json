@@ -1,0 +1,20 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/hm/hello_world/robots/devel/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/hm/hello_world/robots/src/turtlebot3_simulations/turtlebot3_fake/include/**",
+        "/home/hm/hello_world/robots/src/turtlebot3_simulations/turtlebot3_gazebo/include/**",
+        "/home/hm/hello_world/robots/src/turtlebot3/turtlebot3_slam/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS"
+    }
+  ],
+  "version": 4
+}
