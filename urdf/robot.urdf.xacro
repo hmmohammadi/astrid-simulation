@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <robot name="astrid" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:include filename="$(find astrid-simulation)/urdf/common_properties.xacro"/>
+    <xacro:include filename="$(find astrid-simulation)/urdf/astrid.gazebo.xacro"/>
 
     <!-- Degree-to-radian conversions -->
     <xacro:property name="degrees_45" value="0.785398163" />
@@ -30,6 +32,13 @@
 
     <xacro:property name="servo_stall_torque" value="57" />
     <xacro:property name="servo_no_load_speed" value="14.66" />
+
+    <xacro:macro name="null_inertial">
+        <inertial>
+          <mass value="0.001" />
+          <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001" />
+        </inertial>
+    </xacro:macro>
 
 
     <link name="base_link"></link>
@@ -205,6 +214,16 @@
         </collision>
     </link>
 
+    <link name="left_steering_link">
+        <xacro:null_inertial />
+    </link>
+ 
+    <joint name="left_steering_link_joint" type="fixed">
+        <parent link="chassis"/>
+        <child link="left_steering_link"/>
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+    </joint>
+
     <link name="front_left_axle">
         <inertial>
             <!-- <origin xyz="0.0 -0.38 0.0" rpy="0.0 0.0 0.0" /> -->
@@ -230,6 +249,17 @@
             </geometry>
         </collision>
     </link>
+
+    <link name="right_steering_link">
+        <xacro:null_inertial />
+    </link>
+
+    <joint name="right_steering_link_joint" type="fixed">
+        <parent link="chassis"/>
+        <child link="right_steering_link"/>
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+    </joint>
+    
 
     <link name="front_right_axle">
         <inertial>
@@ -267,21 +297,38 @@
         <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
     </joint> -->
 
-    <joint name="front_right_axle_joint" type="revolute">
+    <joint name="front_right_axle_joint" type="continuous">
         <origin xyz="1.0 -0.6 0" rpy="0 0 0" />
-        <parent link="chassis"/>
+        <parent link="right_steering_link"/>
         <child link="front_right_axle"/>
         <axis xyz="0.0 0.0 1.0"/>
         <limit lower="${-degrees_30}" upper="${degrees_30}" effort="${servo_stall_torque}" velocity="${servo_no_load_speed}" />
     </joint>
 
-    <joint name="front_left_axle_joint" type="revolute">
+    <joint name="front_left_axle_joint" type="continuous">
         <origin xyz="1.0 0.6 0" rpy="0 0 0" />
-        <parent link="chassis"/>
+        <parent link="left_steering_link"/>
         <child link="front_left_axle"/>
-        <axis xyz="0.0 0 1.0"/>
+        <axis xyz="0.0 0 -1.0"/>
         <limit lower="${-degrees_30}" upper="${degrees_30}" effort="${servo_stall_torque}" velocity="${servo_no_load_speed}" />
     </joint>
+
+    <joint name="front_right_wheel_joint" type="revolute">
+        <origin xyz="0.0 0.0 0" rpy="0 0 0" />
+        <parent link="front_right_axle"/>
+        <child link="front_right_wheel"/>
+        <axis xyz="0 1 0" />
+        <limit lower="${-degrees_30}" upper="${degrees_30}" effort="${servo_stall_torque}" velocity="${servo_no_load_speed}" />
+    </joint>
+
+    <joint name="front_left_wheel_joint" type="revolute">
+        <origin xyz="0.0 0.0 0" rpy="0 0 0" />
+        <parent link="front_left_axle"/>
+        <child link="front_left_wheel"/>
+        <axis xyz="0 1 0" />
+        <limit lower="${-degrees_30}" upper="${degrees_30}" effort="${servo_stall_torque}" velocity="${servo_no_load_speed}" />
+    </joint>
+
 
     <joint name="rear_axle_joint" type="fixed">
         <origin xyz="-1.0 0.0 0" rpy="0 0.0 0.0"/>
@@ -290,22 +337,6 @@
         <child link="rear_axle"/>
         <!-- <axis xyz="0.0 1.0 0.0"/> -->
         <!-- <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/> -->
-    </joint>
-
-    <joint name="front_right_wheel_joint" type="revolute">
-        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
-        <parent link="front_right_axle"/>
-        <child link="front_right_wheel"/>
-        <axis xyz="0 1 0" />
-        <limit lower="${-degrees_30}" upper="${degrees_30}" effort="${servo_stall_torque}" velocity="${servo_no_load_speed}" />
-    </joint>
-
-    <joint name="front_left_wheel_joint" type="revolute">
-        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
-        <parent link="front_left_axle"/>
-        <child link="front_left_wheel"/>
-        <axis xyz="0 1 0" />
-        <limit lower="${-degrees_30}" upper="${degrees_30}" effort="${servo_stall_torque}" velocity="${servo_no_load_speed}" />
     </joint>
 
     <joint name="rear_right_wheel_joint" type="revolute">
